@@ -33,7 +33,7 @@ CommandLineOptions::CommandLineOptions(int argc, char** argv)
 :levelsFile("")
 ,optionsFile("OPTIONS")
 ,seed("time")
-,dataFile("")
+,dataFile("fake_data_like_nuoph.txt")
 ,compression("2.7182818284590451")
 ,numThreads(1)
 {

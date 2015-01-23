@@ -23,6 +23,7 @@
 #include "RandomNumberGenerator.h"
 #include "Sampler.h"
 #include "Options.h"
+#include "Data.h"
 
 #ifndef DNest3_No_Boost
 #include "MTSampler.h"
@@ -42,6 +43,9 @@ MTSampler<ModelType> setup_mt(int argc, char** argv)
 template<class ModelType>
 MTSampler<ModelType> setup_mt(const CommandLineOptions& options)
 {
+	// Load the data
+	Data::get_instance().load(options.get_dataFile().c_str());
+
 	std::cout<<"# Using "<<options.get_numThreads()<<" thread"<<
 		((options.get_numThreads() == 1)?("."):("s."))<<std::endl;
 
