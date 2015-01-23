@@ -32,8 +32,8 @@ void Orbit::load(const char* filename)
 		vy.push_back(temp2);
 	}
 
-	cout<<"# Loaded "<<vx.size()<<" points from orbit file ";
-	cout<<filename<<"."<<endl;
+	// cout<<"# Loaded "<<vx.size()<<" points from orbit file ";
+	// cout<<filename<<"."<<endl;
 
 	fin.close();
 }
