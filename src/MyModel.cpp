@@ -20,9 +20,13 @@ void MyModel::fromPrior()
 {
 	objects.fromPrior();
 	objects.consolidate_diff();
+	// prior for m0, constant offset: uniform between RVmin and RVmax
 	background = Data::get_instance().get_y_min() +
 		(Data::get_instance().get_y_max() - Data::get_instance().get_y_min())*randomU();
+	// prior for extra noise parameter: standard Cauchy, truncated -21.2, 21.2
 	extra_sigma = exp(tan(M_PI*(0.97*randomU() - 0.485)));
+	// prior for shape parameter of sampling (likelihood) t-distribution
+	// uniform between log(0.1) and log(1000)
 	nu = exp(log(0.1) + log(1000.)*randomU());
 	calculate_mu();
 }
@@ -114,6 +118,13 @@ double MyModel::logLikelihood() const
 
 	double logL = 0.;
 	double var;
+	// the likelihood is a non-standardized Student's t-distribution
+	// parameterized with a location parameter m(t_i) and a scale 
+	// parameter s = sqrt(sigma^2 + sigma_extra^2).
+	// Below, the distribution is written in terms of s^2, see
+	// http://en.wikipedia.org/wiki/Student%27s_t-distribution#In_terms_of_scaling_parameter_.CF.83.2C_or_.CF.832
+	// Note that the variance of this distribution depends not only 
+	// on s but also on the degrees of freedom nu
 	for(size_t i=0; i<y.size(); i++)
 	{
 		var = sig[i]*sig[i] + extra_sigma*extra_sigma;

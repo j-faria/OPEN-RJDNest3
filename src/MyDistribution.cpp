@@ -10,13 +10,25 @@ MyDistribution::MyDistribution()
 
 }
 
+// Sample prior hyperparameters from their respective priors (no pun intended)
 void MyDistribution::fromPrior()
 {
-	// Cauchy prior centered on 5.901 = log(365 days).
+	// Median orbital period, mu_P
+	// Cauchy prior centered on 5.901 = log(365 days), scale = 1
+	// general form for location=x0, scale=c
+	// cauchy_rand = c * tan(M_PI * (randomU()-0.5)) + x0
+	// the distribution is truncated to the interval -15.3, 27.1, hence
+	// the 0.97 and 0.485 values
 	center = 5.901 + tan(M_PI*(0.97*randomU() - 0.485));
+	// Diversity of orbital periods, w_P
+	// uniform prior between 0.1 and 3
 	width = 0.1 + 2.9*randomU();
+	// Mean amplitude (metres per second) 
+	// standard Cauchy prior 
+	// again truncated to the interval -21.2, 21.2
 	mu = exp(tan(M_PI*(0.97*randomU() - 0.485)));
 }
+
 
 double MyDistribution::perturb_parameters()
 {
