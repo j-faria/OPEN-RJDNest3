@@ -1,7 +1,8 @@
 from pylab import *
 import os
 
-data = loadtxt('fake_data.txt')
+# data = loadtxt('fake_data.txt')
+data = loadtxt('14her.rv')
 posterior_sample = atleast_2d(loadtxt('posterior_sample.txt'))
 
 saveFrames = False # For making movies
