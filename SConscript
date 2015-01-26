@@ -3,7 +3,10 @@ import sys
 source_files = Glob('src/*.cpp')
 
 
-env = Environment(CPPPATH=['include'])
+env = Environment(CCFLAGS='-fPIC -Ofast -flto -funroll-loops -Wall -Wextra -ansi -pedantic -DNDEBUG',
+	              CPPPATH=['include'],
+	              LIBPATH=['.', '/usr/local/lib'],
+	              )
 env['STATIC_AND_SHARED_OBJECTS_ARE_THE_SAME']=1
 
 def print_cmd_line(s, target, src, env):
@@ -20,9 +23,11 @@ objs = env.Object(source_files)
 env.StaticLibrary('libdnest3', objs)
 env.SharedLibrary('libdnest3', objs)
 
+env.StaticLibrary('librjobject', objs)
+# env.SharedLibrary('librjobject', objs)
 
 env.Program('main', [objs, 'main.cpp'],
-	        LIBS=['dnest3', 'gsl', 'gslcblas', 'boost_thread', 'boost_system'])
+	        LIBS=['rjobject', 'dnest3', 'gsl', 'gslcblas', 'boost_thread', 'boost_system'])
 
-env.SharedLibrary('librjobject', objs)
+
 
