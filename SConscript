@@ -3,7 +3,8 @@ import sys
 source_files = Glob('src/*.cpp')
 
 
-env = Environment(CCFLAGS='-fPIC -Ofast -flto -funroll-loops -Wall -Wextra -ansi -pedantic -DNDEBUG',
+env = Environment(CCFLAGS='-fPIC -Ofast -O3 -flto -funroll-loops -Wall -Wextra -ansi -pedantic -DNDEBUG',
+	              # CCFLAGS='-fPIC -pg -Wall -ansi -pedantic',
 	              CPPPATH=['include'],
 	              LIBPATH=['.', '/usr/local/lib'],
 	              )
@@ -27,6 +28,10 @@ env.StaticLibrary('librjobject', objs)
 # env.SharedLibrary('librjobject', objs)
 
 env.Program('main', [objs, 'main.cpp'],
+	        LIBS=['rjobject', 'dnest3', 'gsl', 'gslcblas', 'boost_thread', 'boost_system'])
+
+
+env.Program('test', [objs, 'tests.cpp'],
 	        LIBS=['rjobject', 'dnest3', 'gsl', 'gslcblas', 'boost_thread', 'boost_system'])
 
 
