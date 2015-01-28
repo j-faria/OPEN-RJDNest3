@@ -29,6 +29,7 @@
 #include "MTSampler.h"
 #endif
 
+
 namespace DNest3
 {
 
@@ -67,8 +68,11 @@ MTSampler<ModelType> setup_mt(const CommandLineOptions& options)
 					samplerOptions);
 
 	// Load levels file if requested
-	if(options.get_levelsFile().compare("") != 0)
+	if(options.get_levelsFile().compare("") != 0) {
 		sampler.loadLevels(options.get_levelsFile().c_str());
+		sampler.restart = true;
+	}
+
 
 	return sampler;
 }

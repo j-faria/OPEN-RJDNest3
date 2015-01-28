@@ -58,10 +58,12 @@ MTSampler<ModelType>::~MTSampler()
 	delete barrier;
 }
 
+
 template<class ModelType>
 void MTSampler<ModelType>::loadLevels(const char* filename)
 {
 	_levels = Level::loadLevels(filename);
+	//Level::count_samples_after_loadLevels(filename);
 	if(static_cast<int>(_levels.size()) > options.maxNumLevels)
 	{
 		std::cout<<"# Truncating to "<<options.maxNumLevels<<" levels."<<std::endl;
@@ -317,7 +319,7 @@ void MTSampler<ModelType>::saveParticle(int iWhich, int jWhich)
 
 	// Save the particle to file
 	std::fstream fout;
-	if(saves == 1)
+	if(saves == 1 and not restart)
 	{
 		fout.open(options.sampleFile.c_str(), std::ios::out);
 		fout<<"# Samples file. One sample per line."<<std::endl;

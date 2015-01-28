@@ -82,6 +82,9 @@ class MTSampler
 		// Load levels from file
 		void loadLevels(const char* filename);
 
+		// Restarting?
+		bool restart;
+
 		// Do the sampling!
 		void run();
 
