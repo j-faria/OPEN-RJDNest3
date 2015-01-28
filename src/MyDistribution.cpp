@@ -2,6 +2,7 @@
 #include "RandomNumberGenerator.h"
 #include "Utils.h"
 #include <cmath>
+#include <gsl/gsl_cdf.h>
 
 using namespace DNest3;
 
@@ -10,7 +11,7 @@ MyDistribution::MyDistribution()
 
 }
 
-// Sample prior hyperparameters from their respective priors (no pun intended)
+// Sample prior hyperparameters from their respective priors
 void MyDistribution::fromPrior()
 {
 	// Median orbital period, mu_P
@@ -63,7 +64,7 @@ double MyDistribution::perturb_parameters()
 // vec[0] = "position" (log-period)
 // vec[1] = amplitude
 // vec[2] = phase
-// vec[3] = v0
+// vec[3] = eccentricity
 // vec[4] = viewing angle
 
 double MyDistribution::log_pdf(const std::vector<double>& vec) const
@@ -75,31 +76,53 @@ double MyDistribution::log_pdf(const std::vector<double>& vec) const
 		return -1E300;
 
 	return  -log(2.*width) - abs(vec[0] - center)/width
-		-log(mu) - vec[1]/mu
-		+ 2.1*log(1. - vec[3]/0.995);
+		    -log(mu) - vec[1]/mu
+		    + 2.1*log(1. - vec[3]/0.995);
 }
 
 void MyDistribution::from_uniform(std::vector<double>& vec) const
 {
+	// inverse CDF of the Laplace distribution
+	// http://en.wikipedia.org/wiki/Laplace_distribution#Cumulative_distribution_function
 	if(vec[0] < 0.5)
 		vec[0] = center + width*log(2.*vec[0]);
 	else
 		vec[0] = center - width*log(2. - 2.*vec[0]);
+
+	// inverse CDF of the Exponential distribution
 	vec[1] = -mu*log(1. - vec[1]);
+
+	// inverse CDF of the Uniform distribution [0, 2pi]
 	vec[2] = 2.*M_PI*vec[2];
-	vec[3] = 1. - pow(1. - 0.995*vec[3], 1./3.1);
+
+	// inverse CDF of the Beta distribution
+	vec[3] = 1. - pow(1. - 0.995*vec[3], 1./3.1);  // original (approximation?)
+	//vec[3] = gsl_cdf_beta_Pinv(vec[3], 0.867, 3.03);  // gsl function with parameters from Kipping (2013)
+
+	// inverse CDF of the Uniform distribution [0, 2pi]
 	vec[4] = 2.*M_PI*vec[4];
 }
 
 void MyDistribution::to_uniform(std::vector<double>& vec) const
 {
+	// CDF of the Laplace distribution
+	// http://en.wikipedia.org/wiki/Laplace_distribution#Cumulative_distribution_function
 	if(vec[0] < center)
 		vec[0] = 0.5*exp((vec[0] - center)/width);
 	else
 		vec[0] = 1. - 0.5*exp((center - vec[0])/width);
+
+	// CDF of the Exponential distribution
 	vec[1] = 1. - exp(-vec[1]/mu);
+
+	// CDF of the Uniform distribution [0, 2pi]
 	vec[2] = vec[2]/(2.*M_PI);
-	vec[3] = 1. - pow(1. - vec[3]/0.995, 3.1);
+
+	// CDF of the Beta distribution
+	vec[3] = 1. - pow(1. - vec[3]/0.995, 3.1);  // original (approximation?)
+	//vec[3] = gsl_cdf_beta_P(vec[3], 0.867, 3.03);  // gsl function with parameters from Kipping (2013)
+	
+	// CDF of the Uniform distribution [0, 2pi]
 	vec[4] = vec[4]/(2.*M_PI);
 }
 
