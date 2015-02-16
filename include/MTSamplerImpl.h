@@ -332,7 +332,7 @@ void MTSampler<ModelType>::saveParticle(int iWhich, int jWhich)
 	fout.close();
 
 	// Save the particle's info
-	if(saves == 1)
+	if(saves == 1 and not restart)
 	{
 		fout.open(options.sampleInfoFile.c_str(), std::ios::out);
 		fout<<"# index, logLikelihood, tieBreaker, ID."<<std::endl;
