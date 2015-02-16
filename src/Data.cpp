@@ -25,6 +25,9 @@ void Data::load(const char* filename)
 	y.clear();
 	sig.clear();
 
+	while(fin.peek() == '#')
+		fin.ignore(1000000, '\n');
+
 	double temp1, temp2, temp3;
 	while(fin>>temp1 && fin>>temp2 && fin>>temp3)
 	{
