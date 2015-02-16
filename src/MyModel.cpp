@@ -10,7 +10,7 @@ using namespace std;
 using namespace DNest3;
 
 MyModel::MyModel()
-:objects(5, 10, false, MyDistribution())
+:objects(5, 3, false, MyDistribution())
 ,mu(Data::get_instance().get_t().size())
 {
 
@@ -57,7 +57,7 @@ void MyModel::calculate_mu()
 	vector<double> arg, evaluations;
 	for(size_t j=0; j<components.size(); j++)
 	{
-		T = exp(components[j][0]);
+		T = components[j][0];
 		A = components[j][1];
 		phi = components[j][2];
 		v0 = sqrt(1. - components[j][3]);
