@@ -315,7 +315,14 @@ void MTSampler<ModelType>::createLevel()
 template<class ModelType>
 void MTSampler<ModelType>::saveParticle(int iWhich, int jWhich)
 {
-	std::cout<<"# Saving a particle to disk. N = "<<(++saves)<<"."<<std::endl;
+
+	++saves;
+	if(saves % 10 == 0)
+	{
+		std::cout<<"# Saving particle N = "<<(saves)<<" to disk."<<std::endl;	
+		//std::cout<<"# Saving a particle to disk. N = "<<(++saves)<<"."<<std::endl;	
+	}
+	
 
 	// Save the particle to file
 	std::fstream fout;
