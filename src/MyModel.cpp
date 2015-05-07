@@ -27,7 +27,7 @@ void MyModel::fromPrior()
 	extra_sigma = exp(tan(M_PI*(0.97*randomU() - 0.485)));
 	// prior for shape parameter of sampling (likelihood) t-distribution
 	// uniform between log(0.1) and log(1000)
-	nu = exp(log(0.1) + log(1000.)*randomU());
+	//nu = exp(log(0.1) + log(1000.)*randomU());
 	calculate_mu();
 }
 
@@ -90,10 +90,10 @@ double MyModel::perturb()
 		extra_sigma = tan(M_PI*(0.97*extra_sigma - 0.485));
 		extra_sigma = exp(extra_sigma);
 
-		nu = log(nu);
+/*		nu = log(nu);
 		nu += log(1000.)*randh();
 		wrap(nu, log(0.1), log(1000.));
-		nu = exp(nu);
+		nu = exp(nu);*/
 	}
 	else
 	{
@@ -125,14 +125,23 @@ double MyModel::logLikelihood() const
 	// http://en.wikipedia.org/wiki/Student%27s_t-distribution#In_terms_of_scaling_parameter_.CF.83.2C_or_.CF.832
 	// Note that the variance of this distribution depends not only 
 	// on s but also on the degrees of freedom nu
-	for(size_t i=0; i<y.size(); i++)
+/*	for(size_t i=0; i<y.size(); i++)
 	{
 		var = sig[i]*sig[i] + extra_sigma*extra_sigma;
 		logL += gsl_sf_lngamma(0.5*(nu + 1.)) - gsl_sf_lngamma(0.5*nu)
 			- 0.5*log(M_PI*nu) - 0.5*log(var)
 			- 0.5*(nu + 1.)*log(1. + pow(y[i] - mu[i], 2)/var/nu);
+*/
+
+
+	// the likelihood is a gaussian 
+	for(size_t i=0; i<y.size(); i++)
+	{
+		var = sig[i]*sig[i] + extra_sigma*extra_sigma;
+		logL += - 0.5*log(2.*M_PI) - 0.5*log(var) - 0.5*pow(y[i] - mu[i], 2)/var;
 	}
 
+	/*cout<<logL<<'\n';*/
 	return logL;
 }
 
@@ -177,7 +186,7 @@ void MyModel::print(std::ostream& out) const
 
 	// for(size_t i=0; i<signal.size(); i++)
 	// 	out<<signal[i]<<' ';
-	out<<extra_sigma<<' '<<nu<<' ';
+	out<<extra_sigma<<' '<< 0. <<' ';
 	out<<' '<<staleness<<' ';
 	out<<background<<' ';
 	objects.print(out); 
@@ -185,6 +194,6 @@ void MyModel::print(std::ostream& out) const
 
 string MyModel::description() const
 {
-	return string("extra_sigma  nu  staleness  m0  num_dimensions  max_num_components  dist.print()  num_components  components");
+	return string("extra_sigma  nu'  staleness  m0  num_dimensions  max_num_components  dist.print()  num_components  components");
 }
 
